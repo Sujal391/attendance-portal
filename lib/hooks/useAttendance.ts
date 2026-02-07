@@ -21,12 +21,20 @@ export const useAttendance = (year?: number, month?: number) => {
     setLoading(true);
     try {
       const response = await attendanceService.punchIn(data);
-      message.success(response.message || 'Punch in successful!');
+      message.success({
+        content: response.message || 'Punch in successful!',
+        key: 'punch-in-success',
+        duration: 3,
+      });
       mutate(); // Refresh data
       return response;
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || 'Punch in failed';
-      message.error(errorMsg);
+      message.error({
+        content: errorMsg,
+        key: 'punch-in-error',
+        duration: 3,
+      });
       throw error;
     } finally {
       setLoading(false);
@@ -37,11 +45,19 @@ export const useAttendance = (year?: number, month?: number) => {
     setLoading(true);
     try {
       const response = await attendanceService.punchOut(empId);
-      message.success(response.message || 'Punch out successful!');
+      message.success({
+        content: response.message || 'Punch out successful!',
+        key: 'punch-out-success',
+        duration: 3,
+      });
       mutate(); // Refresh data
       return response;
     } catch (error: any) {
-      message.error(error.response?.data?.message || 'Punch out failed');
+      message.error({
+        content: error.response?.data?.message || 'Punch out failed',
+        key: 'punch-out-error',
+        duration: 3,
+      });
       throw error;
     } finally {
       setLoading(false);

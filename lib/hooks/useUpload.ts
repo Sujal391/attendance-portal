@@ -27,12 +27,18 @@ export const useUpload = () => {
       );
 
       setUploadProgress(100);
-      message.success(response.message || 'Face photo uploaded successfully!');
+      message.success({
+        content: response.message || 'Face photo uploaded successfully!',
+        key: 'upload-success',
+        duration: 3,
+      });
       return response;
     } catch (error: any) {
-      message.error(
-        error.message || error.response?.data?.message || 'Upload failed'
-      );
+      message.error({
+        content: error.message || error.response?.data?.message || 'Upload failed',
+        key: 'upload-error',
+        duration: 3,
+      });
       throw error;
     } finally {
       setLoading(false);

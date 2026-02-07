@@ -6,13 +6,9 @@ export const API_ENDPOINTS = {
     LOGOUT: '/api/Auth/logout',
   },
 
-  // Employee endpoints
+  // Employee endpoints (GET all + POST create)
   EMPLOYEE: {
     BASE: '/api/Employee',
-    BY_ID: (id: number) => `/api/Employee/${id}`,
-    CREATE: '/api/Employee',
-    UPDATE: (id: number) => `/api/Employee/${id}`,
-    DELETE: (id: number) => `/api/Employee/${id}`,
   },
 
   // Upload endpoints

@@ -1,14 +1,16 @@
-// User roles
+// User roles (4 roles only - employees have no portal access)
 export const USER_ROLES = {
   ADMIN: 'Admin',
-  HR: 'HR',
-  EMPLOYEE: 'Employee',
+  HR: 'Hr',
+  MANAGER: 'Manager',
+  SUPERVISOR: 'Supervisor',
 } as const;
 
 export const ROLE_OPTIONS = [
   { label: 'Admin', value: USER_ROLES.ADMIN },
   { label: 'HR', value: USER_ROLES.HR },
-  { label: 'Employee', value: USER_ROLES.EMPLOYEE },
+  { label: 'Manager', value: USER_ROLES.MANAGER },
+  { label: 'Supervisor', value: USER_ROLES.SUPERVISOR },
 ];
 
 // Attendance status
@@ -67,26 +69,38 @@ export const MESSAGES = {
   SUCCESS_DELETE: 'Deleted successfully!',
 } as const;
 
-// Routes
+// Routes based on roles
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
   REGISTER: '/register',
+
+  // Dashboard (role-based content)
   DASHBOARD: '/dashboard',
+
+  // Employee management (HR & Supervisor)
   EMPLOYEES: '/employees',
   EMPLOYEES_NEW: '/employees/new',
   EMPLOYEE_DETAIL: (id: number) => `/employees/${id}`,
   FACE_REGISTRATION: (id: number) => `/employees/${id}/face-registration`,
-  ATTENDANCE_PUNCH_IN: '/attendance/punch-in',
-  ATTENDANCE_PUNCH_OUT: '/attendance/punch-out',
-  ATTENDANCE_REPORTS: '/attendance/reports',
+
+  // Profile
   PROFILE: '/profile',
+} as const;
+
+// Role-based redirects after login
+export const ROLE_REDIRECTS = {
+  [USER_ROLES.ADMIN]: ROUTES.DASHBOARD,
+  [USER_ROLES.HR]: ROUTES.DASHBOARD,
+  [USER_ROLES.MANAGER]: ROUTES.DASHBOARD,
+  [USER_ROLES.SUPERVISOR]: ROUTES.DASHBOARD,
 } as const;
 
 // Local storage keys
 export const STORAGE_KEYS = {
   THEME: 'theme',
   LANGUAGE: 'language',
+  USER_ROLE: 'user_role',
 } as const;
 
 // Geolocation

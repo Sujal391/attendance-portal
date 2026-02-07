@@ -2,27 +2,62 @@ import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { message } from 'antd';
 import { authService } from '@/services/auth.service';
+import { useAuthStore } from '@/store';
+import { ROLE_REDIRECTS } from '@/lib/utils/constants';
 import type { LoginDto, RegisterDto } from '@/lib/types';
 
 export const useAuth = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const clearStoreUser = useAuthStore((s) => s.clearUser);
 
   const login = useCallback(
     async (credentials: LoginDto) => {
       setLoading(true);
       try {
-        await authService.login(credentials.username, credentials.password);
-        message.success('Login successful!');
-        router.push('/dashboard');
+        const { token, user } = await authService.login(
+          credentials.username,
+          credentials.password
+        );
+
+        if (!user) {
+          message.error({
+            content: 'Login failed: could not read user info from token.',
+            key: 'login-error',
+            duration: 3,
+          });
+          return;
+        }
+
+        // Persist user + token in zustand (also persisted to localStorage)
+        setAuth(user, token);
+
+        message.success({
+          content: 'Login successful!',
+          key: 'login-success',
+          duration: 2,
+        });
+
+        // Redirect based on role
+        const redirectPath =
+          ROLE_REDIRECTS[user.role as keyof typeof ROLE_REDIRECTS] ||
+          '/dashboard';
+        router.push(redirectPath);
       } catch (error: any) {
-        message.error(error.response?.data?.message || 'Login failed');
+        message.error({
+          content:
+            error.response?.data?.message ||
+            'Login failed. Please check your credentials.',
+          key: 'login-error',
+          duration: 3,
+        });
         throw error;
       } finally {
         setLoading(false);
       }
     },
-    [router]
+    [router, setAuth]
   );
 
   const register = useCallback(
@@ -30,10 +65,20 @@ export const useAuth = () => {
       setLoading(true);
       try {
         await authService.register(data);
-        message.success('Registration successful! Please login.');
+        message.success({
+          content: 'Registration successful! Please login.',
+          key: 'register-success',
+          duration: 2,
+        });
         router.push('/login');
       } catch (error: any) {
-        message.error(error.response?.data?.message || 'Registration failed');
+        message.error({
+          content:
+            error.response?.data?.message ||
+            'Registration failed. Please try again.',
+          key: 'register-error',
+          duration: 3,
+        });
         throw error;
       } finally {
         setLoading(false);
@@ -45,15 +90,24 @@ export const useAuth = () => {
   const logout = useCallback(async () => {
     setLoading(true);
     try {
-      // Since session is managed by backend, just redirect
-      message.success('Logged out successfully');
+      await authService.logout();
+      clearStoreUser();
+      message.success({
+        content: 'Logged out successfully',
+        key: 'logout-success',
+        duration: 2,
+      });
       router.push('/login');
     } catch (error: any) {
-      message.error('Logout failed');
+      message.error({
+        content: 'Logout failed',
+        key: 'logout-error',
+        duration: 2,
+      });
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, clearStoreUser]);
 
   return {
     login,

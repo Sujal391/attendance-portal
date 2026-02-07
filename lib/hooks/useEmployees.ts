@@ -1,16 +1,18 @@
-// src/lib/hooks/useEmployees.ts
 import useSWR from 'swr';
 import { employeeService } from '@/services/employee.service';
+import type { Employee } from '@/lib/types';
 
 export const useEmployees = () => {
-  const { data, error, mutate } = useSWR(
-    '/api/Employee',
-    employeeService.getAll
-  );
+  const {
+    data,
+    error,
+    mutate,
+    isLoading,
+  } = useSWR<Employee[]>('/api/Employee', employeeService.getAll);
 
   return {
     employees: data,
-    isLoading: !error && !data,
+    isLoading,
     isError: error,
     refresh: mutate,
   };
