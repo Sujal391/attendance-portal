@@ -1,41 +1,55 @@
-import "antd/dist/reset.css";
-import "./globals.css"; // Import the updated CSS
-import { ReactNode } from "react";
-import { ConfigProvider } from "antd";
+import type { Metadata } from 'next';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
+import { ConfigProvider, App } from 'antd';
+import './globals.css';
 
-interface RootLayoutProps {
-  children: ReactNode;
-}
+export const metadata: Metadata = {
+  title: 'Attendance Management System',
+  description: 'Professional attendance tracking and management',
+};
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className="h-full">
-      <head>
-        <style>{`
-          /* Nuclear option - forces background */
-          html, body, #__next {
-            background-color: #CBDDE9 !important;
-            height: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-          }
-        `}</style>
-      </head>
-      <body className="bg-[#CBDDE9] h-full">
-        <ConfigProvider
-          theme={{
-            token: {
-              colorPrimary: "#2872A1",
-              colorText: "#2872A1",
-              colorBgContainer: "#FFFFFF",
-              colorBgLayout: "#CBDDE9",
-            },
-          }}
-        >
-          <div className="min-h-screen flex items-center justify-center p-4 bg-[#CBDDE9]">
-            {children}
-          </div>
-        </ConfigProvider>
+    <html lang="en">
+      <body className="antialiased">
+        <AntdRegistry>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: '#2872A1',
+                colorLink: '#2872A1',
+                colorLinkHover: '#1d5580',
+                borderRadius: 8,
+                colorBgContainer: '#ffffff',
+              },
+              components: {
+                Button: {
+                  colorPrimary: '#2872A1',
+                  algorithm: true,
+                },
+                Input: {
+                  colorPrimary: '#2872A1',
+                  colorPrimaryHover: '#2872A1',
+                },
+                Select: {
+                  colorPrimary: '#2872A1',
+                },
+                Message: {
+                  contentBg: '#ffffff',
+                  contentPadding: '10px 16px',
+                },
+              },
+            }}
+          >
+            <App>
+              {children}
+            </App>
+          </ConfigProvider>
+        </AntdRegistry>
       </body>
     </html>
   );

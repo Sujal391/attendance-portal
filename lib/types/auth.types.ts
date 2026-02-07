@@ -12,16 +12,22 @@ export interface RegisterDto {
 export interface User {
   id: number;
   username: string;
-  role: 'Admin' | 'HR' | 'Employee';
+  role: 'Admin' | 'Hr' | 'Manager' | 'Supervisor';
+  name?: string;
+  department?: string;
 }
 
 export interface AuthResponse {
-  success: boolean;
-  message?: string;
+  token: string;
+}
+
+export interface JwtPayload {
+  [key: string]: any;
 }
 
 export enum UserRole {
   Admin = 'Admin',
-  HR = 'HR',
-  Employee = 'Employee'
+  HR = 'Hr',
+  Manager = 'Manager',
+  Supervisor = 'Supervisor',
 }
